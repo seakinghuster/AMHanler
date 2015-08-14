@@ -13,17 +13,19 @@ import com.seaking.mapper.ManifestInterface;
 import com.seaking.mapper.ReceiverInterface;
 import com.seaking.mapper.ServiceInterface;
 
-//主要检测Activity、Provider、Service、Receiver组件的暴露问题
-//和由之引起的权限暴露问题
+//主要检测Activity、Provider、Service、Receiver组件的暴露,AM错误配置、以及组件暴露引起的权限漏洞几大类
 public class ManifestChecker {
 	
 	private ManifestInterface manifest;
 	
-	private String ACTIVITY_VUL="activityexpose";
-	private String SERVICE_VUL="serviceexpose";
-	private String PROVIDER_VUL="providerexpose";
-	private String RECIEVER_VUL="recieverexpose";
-	private String PERMISSION_VUL="permissionexpose";
+	private String ACTIVITY_VUL="activity";
+	private String SERVICE_VUL="service";
+	private String PROVIDER_VUL="provider";
+	private String RECIEVER_VUL="broadcast";
+	private String PERMISSION_VUL="expose";
+	private String AMBACKUP_VUL="backup";
+	private String AMDEBUG_VUL="debug";
+	
 	
 	private boolean isActivityExported=false;
 	private boolean isServiceExported=false;
@@ -37,13 +39,14 @@ public class ManifestChecker {
 	}
 	
 	public void check(){
+		vulnerlist.add(this.DebugChecker());
+		vulnerlist.add(this.BackUpChecker());
 		vulnerlist.add(this.ActivityChecker());
 		vulnerlist.add(this.ServiceChecker());
 		vulnerlist.add(this.ReceiverChecker());
 		vulnerlist.add(this.ProviderChecker());
 		
 		VulnerabilityResult vp=new VulnerabilityResult();
-		//写入漏洞类型
 		vp.setName(PERMISSION_VUL);
 		List<String> info=new ArrayList<String>();
 		
@@ -55,11 +58,33 @@ public class ManifestChecker {
 		}
 		vulnerlist.add(vp);
 	}
-	
-	//检查Activity组件
+	//
+	private VulnerabilityResult DebugChecker(){
+		VulnerabilityResult v = new VulnerabilityResult();
+		v.setName(AMDEBUG_VUL);
+		List<String> info = new ArrayList<String>();
+		int count = 0;
+		if(manifest.isAppDebuggable()){
+			v.setCount(1);
+			info.add("AM文件中deuggable属性设为true,存在一定风险");
+			v.setInfolist(info);
+		}
+		return v;
+	}
+	private VulnerabilityResult BackUpChecker(){
+		VulnerabilityResult v = new VulnerabilityResult();
+		v.setName(AMBACKUP_VUL);
+		List<String> info = new ArrayList<String>();
+		int count = 0;
+		if(manifest.isAppAllowBackup()){
+			v.setCount(1);
+			info.add("AM文件中allowBackup属性设为true,存在一定风险");
+			v.setInfolist(info);
+		}
+		return v;
+	}
 	private VulnerabilityResult ActivityChecker(){
 		VulnerabilityResult v=new VulnerabilityResult();
-		//写入漏洞类型
 		v.setName(ACTIVITY_VUL);
 		List<String> info=new ArrayList<String>();
 		int count=0;
@@ -83,18 +108,13 @@ public class ManifestChecker {
                 }
             }
         }
-		//写入count
 		v.setCount(count);
-		//写入info
 		v.setInfolist(info);
 		return v;
 	}
 	
-	
-	//检查Service组件
 	private VulnerabilityResult ServiceChecker(){
 		VulnerabilityResult v=new VulnerabilityResult();
-		//写入漏洞类型
 		v.setName(SERVICE_VUL);
 		List<String> info=new ArrayList<String>();
 		int count=0;
@@ -110,18 +130,13 @@ public class ManifestChecker {
             	
             }
         }
-        
-      //写入count
 		v.setCount(count);
-		//写入info
 		v.setInfolist(info);
 		return v;
 	}
 	
-	//检查Recevier组件
 	private VulnerabilityResult ReceiverChecker(){
 		VulnerabilityResult v = new VulnerabilityResult();
-		// 写入漏洞类型
 		v.setName(RECIEVER_VUL);
 		List<String> info = new ArrayList<String>();
 		int count = 0;
@@ -136,19 +151,14 @@ public class ManifestChecker {
 				}
 			}
 		}
-
-		// 写入count
 		v.setCount(count);
-		// 写入info
 		v.setInfolist(info);
 		return v;
 		
 	}
 	
-	//检查Provider组件
 	private VulnerabilityResult ProviderChecker(){
 		VulnerabilityResult v = new VulnerabilityResult();
-		// 写入漏洞类型
 		v.setName(PROVIDER_VUL);
 		List<String> info = new ArrayList<String>();
 		int count = 0;
@@ -163,13 +173,11 @@ public class ManifestChecker {
 				}
 			}
 		}
-
-		// 写入count
 		v.setCount(count);
-		// 写入info
 		v.setInfolist(info);
 		return v;
 	}
+	
 	
 	public List<VulnerabilityResult> getVulnerList(){
 		return vulnerlist;

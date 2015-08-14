@@ -16,6 +16,9 @@
  */
 package com.seaking.component;
 
+import java.util.Set;
+
+import com.google.gson.Gson;
 import com.seaking.mapper.ActionInterface;
 import com.seaking.mapper.ActivityInterface;
 import com.seaking.mapper.IntentFilterInterface;
@@ -32,6 +35,7 @@ public class Activity extends IntentReceivingComponent implements ActivityInterf
 
     private String usePermission;
     private String exported;
+    
     
 	public Activity(String name) {
 		super();
@@ -85,20 +89,5 @@ public class Activity extends IntentReceivingComponent implements ActivityInterf
         }
 	    head=head+sb.toString()+ "</Activity>";
 	    return head ;
-		
-// ['normal', 'control vibrator', 'Allows the application to control the vibrator.']
-//	android.permission.RECEIVE_BOOT_COMPLETED ['normal', 'automatically start at boot', 'Allows an application to start itself as soon as the system has finished booting. This can make it take longer to start the phone and allow the application to slow down the overall phone by always running.']
-//	'rmal', 'view Wi-Fi status', 'Allows an application to view the information about the status of Wi-Fi.']
-//	['normal', 'prevent phone from sleeping', 'Allows an application to prevent the phone from going to sleep.']normal', 'view network status', 'Allows an application to view the status of all networks.']
-// ['dangerous', 'full Internet access', 'Allows an application to create network sockets.']
-//	android.permission.WRITE_EXTERNAL_STORAGE ['dangerous', 'modify/delete SD card contents', 'Allows an application to write to the SD card.']
-//	android.permission.FLASHLIGHT 
-//		'FACTORY_TEST', 'CHANGE_WIFI_STATE', 
-//		'RECORD_AUDIO', 'BROADCAST_STICKY', 
-//		'USE_CREDENTIALS', 
-//	
-//		'ACCESS_COARSE_LOCATION', 
-//		'SET_WALLPAPER', 'GET_ACCOUNTS', 'READ_CONTACTS', 
-//		'READ_PHONE_STATE', , 'ACCESS_FINE_LOCATION']
 	}
 }

@@ -264,6 +264,8 @@ public interface ManifestInterface {
 	public void setAppDebuggable(boolean b);
 	
 	public void setAppAllowBackup(boolean b);
+	
+	public boolean isAppAllowBackup();
 
 	/**
 	 * Returns the activity that is used to start the application.

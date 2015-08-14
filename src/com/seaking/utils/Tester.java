@@ -23,28 +23,29 @@ public static void main(String[] args) throws XmlPullParserException, ManifestPa
 	File archive=new File("D:\\Downloads\\com.gift.android_040615.apk");
 	File dest=new File("D:\\Downloads\\gift");
 	//获取签名信息
+	System.out.println("证书信息：");
 	CertificateReader cert=new CertificateReader(archive);
-	System.out.println(cert.getCertificate());
-	System.out.println(cert.getMD5());
-	System.out.println(cert.getSHA1());
+	System.out.println("cert:"+cert.getCertificate());
+	System.out.println("MD5:"+cert.getMD5());
+	System.out.println("SHA1:"+cert.getSHA1());
 	try {
 		ExtractAM.extractApk(archive,dest);
 		ExtractAM.parseXML(dest);
 	} catch (IOException e) {
 		e.printStackTrace();
 	}
-	//Manifest mai=new Manifest(new File("D:\\Downloads\\gift\\AndroidManifest.xml"));
-	Manifest mai=(Manifest) new DOMManifestParser().parse(new File("D:\\Downloads\\gift\\AndroidManifest.xml"));
 	
+	Manifest mai=(Manifest) new DOMManifestParser().parse(new File("D:\\Downloads\\gift\\AndroidManifest.xml"));
+	System.out.println("申请权限信息：");
 	for(PermissionRequestInterface per:mai.getRequestedPermissions()){
 		System.out.println(((PermissionRequest)per).getRequestedPermission().getName());
 	}
+	System.out.println("AM漏洞检测信息：");
 	ManifestChecker mainchecker=new ManifestChecker(mai);
     mainchecker.check();
     for(VulnerabilityResult res:mainchecker.getVulnerList()){
         System.out.println(res.toString());
     }
-    System.out.println("运行完了");
     }
 
 }

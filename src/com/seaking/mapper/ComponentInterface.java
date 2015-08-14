@@ -26,10 +26,6 @@ public interface ComponentInterface {
 
 	public abstract boolean isEntryPoint();
 	
-	/**
-	 * @author xiong
-	 * @return ¼ì²â×é¼þÊÇ·ñexported
-	 */
 	public abstract boolean isExported();
 
 }

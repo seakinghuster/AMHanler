@@ -443,4 +443,11 @@ public class Manifest implements ManifestInterface {
 		this.appAllowBackup=appAllowBackup;
 	}
 
+	@Override
+	public boolean isAppAllowBackup() {
+		// TODO Auto-generated method stub
+		return appAllowBackup;
+	}
+	
+
 }
