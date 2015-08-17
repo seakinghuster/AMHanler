@@ -1,5 +1,7 @@
 package com.seaking.component;
 
+import com.google.gson.Gson;
+
 
 
 public class Provider extends Component{
@@ -44,13 +46,10 @@ public class Provider extends Component{
     }
     
     public String toString(){
-		String head = "<provider  android:name=\"" + getName() + "\"";
-		if (exported != null) {
-			head += " android:exported=\"" + exported + "\"";
-		}
-
-		StringBuilder sb = new StringBuilder();
-		head = head + sb.toString() + "</provider>";
-		return head;
+    	Provider pro=new Provider();
+    	pro.setName(name);
+    	Gson gson=new Gson();
+		String proStr=gson.toJson(pro);
+		return proStr;
     }
 }

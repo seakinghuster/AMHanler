@@ -16,6 +16,9 @@
  */
 package com.seaking.component;
 
+import com.google.gson.Gson;
+import com.seaking.mapper.ActionInterface;
+import com.seaking.mapper.IntentFilterInterface;
 import com.seaking.mapper.ReceiverInterface;
 
 
@@ -66,12 +69,15 @@ public class Receiver extends IntentReceivingComponent implements ReceiverInterf
     }
 
     public String toString(){
-    	String head = "<receiver  android:name=\" " + getName() ;
-    	if(exported!=null){
-	    	head+="\" android:exported=\""+exported+"\"";
-	    }
-    	StringBuilder sb = new StringBuilder();  	   
-  	    head=head+sb.toString()+ "</receiver>";
-  	    return head ;
+    	Receiver rec=new Receiver(getName());
+		for(IntentFilterInterface intent : getIntentFilters()) {
+			for(ActionInterface action: intent.getActions()){
+				intent.addAction(action);
+			}
+			rec.addIntentFilter(intent);
+		}
+		Gson gson=new Gson();
+		String recStr=gson.toJson(rec);
+		return recStr;
     }
 }

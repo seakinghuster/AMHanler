@@ -16,6 +16,9 @@
  */
 package com.seaking.component;
 
+import com.google.gson.Gson;
+import com.seaking.mapper.ActionInterface;
+import com.seaking.mapper.IntentFilterInterface;
 import com.seaking.mapper.ServiceInterface;
 
 
@@ -66,13 +69,16 @@ public class Service extends IntentReceivingComponent implements ServiceInterfac
     }
 
     public String toString(){
-		String head = "<service  android:name=\"" + getName();
-		if (exported != null) {
-			head += "\" android:exported=\"" + exported + "\"";
+    	Service ser=new Service(getName());
+		for(IntentFilterInterface intent : getIntentFilters()) {
+			for(ActionInterface action: intent.getActions()){
+				intent.addAction(action);
+			}
+			ser.addIntentFilter(intent);
 		}
-		StringBuilder sb = new StringBuilder();
-		head = head + sb.toString() + "</service>";
-		return head;
+		Gson gson=new Gson();
+		String serStr=gson.toJson(ser);
+		return serStr;
     }
 }
 

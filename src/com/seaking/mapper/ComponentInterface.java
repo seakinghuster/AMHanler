@@ -27,5 +27,9 @@ public interface ComponentInterface {
 	public abstract boolean isEntryPoint();
 	
 	public abstract boolean isExported();
+	
+	/*public abstract void setUsePermission(String UsePermission);
+	
+	public abstract String getUsePermission();*/
 
 }

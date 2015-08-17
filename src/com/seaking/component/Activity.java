@@ -72,9 +72,18 @@ public class Activity extends IntentReceivingComponent implements ActivityInterf
 	        else return true;
 	    }else return false;
 	}
-	
 	public String toString(){
-		String head = "<activity  android:name=\"" + getName()+"\"";	   
+		Activity act=new Activity(getName());
+		for(IntentFilterInterface intent : getIntentFilters()) {
+			for(ActionInterface action: intent.getActions()){
+				intent.addAction(action);
+			}
+			act.addIntentFilter(intent);
+		}
+		Gson gson=new Gson();
+		String actStr=gson.toJson(act);
+		return actStr;
+		/*String head = "<activity  android:name=\"" + getName()+"\"";	   
 	    if(exported!=null){
 	    	head+=" android:exported=\""+exported+"\"";
 	    }
@@ -88,6 +97,6 @@ public class Activity extends IntentReceivingComponent implements ActivityInterf
            sb.append("</intent-filter>");
         }
 	    head=head+sb.toString()+ "</Activity>";
-	    return head ;
+	    return head ;*/
 	}
 }

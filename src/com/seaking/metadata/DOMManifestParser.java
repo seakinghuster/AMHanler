@@ -37,6 +37,7 @@ import com.seaking.component.IntentReceivingComponent;
 import com.seaking.component.Manifest;
 import com.seaking.component.Permission;
 import com.seaking.component.PermissionRequest;
+import com.seaking.component.PermissionType;
 import com.seaking.component.Provider;
 import com.seaking.component.Receiver;
 import com.seaking.component.Service;
@@ -373,10 +374,29 @@ public class DOMManifestParser implements ManifestParser {
 	}
 
 	private void parsePermissions(Document doc, ManifestInterface manifest) {
+		NodeList userDefinePermissions = doc.getElementsByTagName("permission");
+		Element userdefpermission;
+		Attr defname,defProLevel;
+		for(int userperNr=0;userperNr<userDefinePermissions.getLength();userperNr++){
+			userdefpermission=(Element) userDefinePermissions.item(userperNr);
+			defname = userdefpermission.getAttributeNodeNS(ANDROID_ATTR_NS, "name");
+			defProLevel = userdefpermission.getAttributeNodeNS(ANDROID_ATTR_NS, "protectionLevel");
+			//default permission is created in case further parsing fails
+			PermissionRequest userequest = new PermissionRequest(new Permission(defname.getValue(),PermissionType.UNKNOWN,defProLevel.getValue()));
+			if(defProLevel!=null){
+				userequest.setProtectionLevel(defProLevel.getValue());
+			}else{
+				userequest.setProtectionLevel("0x00000000");
+			}
+			manifest.addPermissionRequest(userequest);
+			LOGGER.debug("Requested userdefpermission: "+ userequest.getRequestedPermission());
+		}
+		LOGGER.debug("Finished analyzing user defined permissions. ");
+
 		NodeList requestedPermissions = doc
 				.getElementsByTagName("uses-permission"); //$NON-NLS-1$
 		Element permission;
-		Attr name;
+		Attr name,protectionLevel;
 		LOGGER.debug("Analyzing requested permissions...");
 
 		// iterate over all permissions requested in the manifest
@@ -384,8 +404,14 @@ public class DOMManifestParser implements ManifestParser {
 				.getLength(); permissionNr++) {
 			permission = (Element) requestedPermissions.item(permissionNr);
 			name = permission.getAttributeNodeNS(ANDROID_ATTR_NS, "name");
+			protectionLevel = permission.getAttributeNodeNS(ANDROID_ATTR_NS, "protectionLevel");
 			//default permission is created in case further parsing fails
 			PermissionRequest request = new PermissionRequest(new Permission(name.getValue()));
+			if(protectionLevel!=null){
+				request.setProtectionLevel(protectionLevel.getValue());
+			}else{
+				request.setProtectionLevel("0x00000000");
+			}
 			manifest.addPermissionRequest(request);
 			LOGGER.debug("Requested permission: "+ request.getRequestedPermission());
 		}

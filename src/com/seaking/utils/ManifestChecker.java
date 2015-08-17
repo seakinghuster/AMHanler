@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.seaking.component.Activity;
+import com.seaking.component.PermissionRequest;
 import com.seaking.component.Provider;
 import com.seaking.datamodel.VulnerabilityResult;
 import com.seaking.mapper.ActionInterface;
 import com.seaking.mapper.ActivityInterface;
 import com.seaking.mapper.IntentFilterInterface;
 import com.seaking.mapper.ManifestInterface;
+import com.seaking.mapper.PermissionRequestInterface;
 import com.seaking.mapper.ReceiverInterface;
 import com.seaking.mapper.ServiceInterface;
 
@@ -25,6 +28,7 @@ public class ManifestChecker {
 	private String PERMISSION_VUL="expose";
 	private String AMBACKUP_VUL="backup";
 	private String AMDEBUG_VUL="debug";
+	private String CUSTOM_VUL="custom";
 	
 	
 	private boolean isActivityExported=false;
@@ -45,6 +49,7 @@ public class ManifestChecker {
 		vulnerlist.add(this.ServiceChecker());
 		vulnerlist.add(this.ReceiverChecker());
 		vulnerlist.add(this.ProviderChecker());
+		vulnerlist.add(this.CustomChecker());
 		
 		VulnerabilityResult vp=new VulnerabilityResult();
 		vp.setName(PERMISSION_VUL);
@@ -58,6 +63,7 @@ public class ManifestChecker {
 		}
 		vulnerlist.add(vp);
 	}
+	
 	//
 	private VulnerabilityResult DebugChecker(){
 		VulnerabilityResult v = new VulnerabilityResult();
@@ -67,8 +73,8 @@ public class ManifestChecker {
 		if(manifest.isAppDebuggable()){
 			v.setCount(1);
 			info.add("AM文件中deuggable属性设为true,存在一定风险");
-			v.setInfolist(info);
 		}
+		v.setInfolist(info);
 		return v;
 	}
 	private VulnerabilityResult BackUpChecker(){
@@ -79,10 +85,33 @@ public class ManifestChecker {
 		if(manifest.isAppAllowBackup()){
 			v.setCount(1);
 			info.add("AM文件中allowBackup属性设为true,存在一定风险");
-			v.setInfolist(info);
 		}
+		v.setInfolist(info);
 		return v;
 	}
+	private VulnerabilityResult CustomChecker() {
+		VulnerabilityResult v=new VulnerabilityResult();
+		v.setName(CUSTOM_VUL);
+		List<String> info=new ArrayList<String>();
+		int count=0;
+		Collection<PermissionRequestInterface> permissions=	manifest.getRequestedPermissions();
+		if(permissions!=null){
+			for(PermissionRequestInterface per:permissions){
+				if(!((PermissionRequest)per).getRequestedPermission().getName().startsWith("android.permission")){
+					if(per.getProtectionLevel().equals("0x00000000")){
+						count++;
+						info.add(((PermissionRequest)per).getRequestedPermission().getName());
+					}
+				}
+			}
+		}
+		v.setCount(count);
+		v.setInfolist(info);
+		return v;
+	}
+			
+	 
+
 	private VulnerabilityResult ActivityChecker(){
 		VulnerabilityResult v=new VulnerabilityResult();
 		v.setName(ACTIVITY_VUL);

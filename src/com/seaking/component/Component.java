@@ -30,7 +30,6 @@ public class Component implements ComponentInterface {
 
 	protected String name;
 	private boolean isEntryPoint;
-
 	public Component() {
 		super();
 	}
@@ -73,5 +72,4 @@ public class Component implements ComponentInterface {
 		// TODO Auto-generated method stub
 		return false;
 	}
-	
 }

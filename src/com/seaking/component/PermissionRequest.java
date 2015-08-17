@@ -32,6 +32,7 @@ public class PermissionRequest implements PermissionRequestInterface {
 	private boolean changed;
 	private PermissionInterface permission;
 	private boolean valid;
+	private String protectionLevel;
 
 	public PermissionRequest(PermissionInterface permission) {
 		this.permission = permission;
@@ -126,5 +127,13 @@ public class PermissionRequest implements PermissionRequestInterface {
 		if (valid != other.valid)
 			return false;
 		return true;
+	}
+
+	public String getProtectionLevel() {
+		return protectionLevel;
+	}
+
+	public void setProtectionLevel(String protectionLevel) {
+		this.protectionLevel = protectionLevel;
 	}
 }

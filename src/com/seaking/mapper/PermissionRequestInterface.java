@@ -51,5 +51,7 @@ public interface PermissionRequestInterface extends PerEntity {
 	public boolean isValid();
 	
 	public void setValid(boolean valid);
+	
+	public String getProtectionLevel();
 
 }
